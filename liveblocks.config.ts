@@ -1,16 +1,65 @@
 import { LiveMap, createClient } from "@liveblocks/client";
 import { createRoomContext, createLiveblocksContext } from "@liveblocks/react";
+import { Reaction, ReactionEvent } from "./types/type";
   
 const client = createClient({
   // publicApiKey: process.env.NEXT_PUBLIC_LIVEBLOCKS_PUBLIC_KEY!,
   publicApiKey: "pk_dev_oDLpBBfv04Z0gURVObrYQ_4gGVkLFGJuakP0XlsvgFC2cxlEsj6Pdt3JSGvHJ17U",
+  // resolveUsers: async ({ userIds }) => {
+  //   // const usersData = await __getUsersFromDB__(userIds);
+
+  //   // return usersData.map((userData) => ({
+  //   //   name: userData.name,
+  //   //   avatar: userData.avatar.src,
+  //   // }));
+  //   return [];
+  // },
+  async resolveUsers({ userIds }) {
+    // Used only for Comments. Return a list of user information retrieved
+    // from `userIds`. This info is used in comments, mentions etc.
+
+    // const usersData = await __fetchUsersFromDB__(userIds);
+    //
+    // return usersData.map((userData) => ({
+    //   name: userData.name,
+    //   avatar: userData.avatar.src,
+    // }));
+
+    return new Array(userIds.length).fill({});
+
+    // return [];
+  },
+  async resolveMentionSuggestions({ text, roomId }) {
+    // Used only for Comments. Return a list of userIds that match `text`.
+    // These userIds are used to create a mention list when typing in the
+    // composer.
+    //
+    // For example when you type "@jo", `text` will be `"jo"`, and
+    // you should to return an array with John and Joanna's userIds:
+    // ["john@example.com", "joanna@example.com"]
+
+    // const userIds = await __fetchAllUserIdsFromDB__(roomId);
+    //
+    // Return all userIds if no `text`
+    // if (!text) {
+    //   return userIds;
+    // }
+    //
+    // Otherwise, filter userIds for the search `text` and return
+    // return userIds.filter((userId) =>
+    //   userId.toLowerCase().includes(text.toLowerCase())
+    // );
+
+    return [];
+  },
 });
 
 // Presence represents the properties that exist on every user in the Room
 // and that will automatically be kept in sync. Accessible through the
 // `user.presence` property. Must be JSON-serializable.
-type Presence = {
-  // cursor: { x: number, y: number } | null,
+export type Presence = {
+  cursor: { x: number, y: number } | null,
+  message: string | null,
   // ...
 };
 
@@ -34,15 +83,16 @@ type UserMeta = {
 
 // Optionally, the type of custom events broadcast and listened to in this
 // room. Use a union for multiple events. Must be JSON-serializable.
-type RoomEvent = {
-  // type: "NOTIFICATION",
-  // ...
-};
+type RoomEvent = ReactionEvent
 
 // Optionally, when using Comments, ThreadMetadata represents metadata on
 // each thread. Can only contain booleans, strings, and numbers.
 export type ThreadMetadata = {
-  // resolved: boolean;
+  resolved: boolean;
+  zIndex: number;
+  time?: number;
+  x: number;
+  y:number;
   // quote: string;
   // time: number;
 };
@@ -94,6 +144,8 @@ export const {
     // useRoomInfo
   }
 } = createRoomContext<Presence, Storage, UserMeta, RoomEvent, ThreadMetadata>(client);
+
+
 
 // Project-level hooks, use inside `LiveblocksProvider`
 export const {
