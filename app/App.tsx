@@ -217,14 +217,7 @@ export default function Page() {
 
         <Live canvasRef={canvasRef} undo={undo} redo={redo} />
 
-        <RightSidebar
-          elementAttributes={elementAttributes}
-          setElementAttributes={setElementAttributes}
-          fabricRef={fabricRef}
-          isEditingRef={isEditingRef}
-          activeObjectRef={activeObjectRef}
-          syncShapeInStorage={syncShapeInStorage}
-        />
+        
       </section>
     </main>
   );
